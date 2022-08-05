@@ -1,15 +1,39 @@
-import { Manager } from "socket.io-client";
+import { io } from "../index.js";
 
-const manager = new Manager("https://example.com", {
-  autoConnect: false,
-});
+const getRoomInfo = (room) => ({ players: [...room] });
 
-const socket = manager.socket("/");
+const createRoom = (socket) => {
+  socket.join(socket.id);
 
-manager.open((err) => {
-  if (err) {
-    // an error has occurred
-  } else {
-    // the connection was successfully established
+  const room = io.sockets.adapter.rooms.get(socket.id);
+
+  socket.emit("room_created", socket.id);
+  socket.emit("room_updated", getRoomInfo(room));
+};
+
+const joinRoom = (roomId, socket) => {
+  const room = io.sockets.adapter.rooms.get(roomId);
+
+  if (!room) {
+    return socket.emit("failed", "Room doesn't exist");
   }
-});
+
+  socket.join(roomId);
+
+  socket.to(roomId).emit("player_joined");
+  socket.to(roomId).emit("room_updated", getRoomInfo(room));
+
+  socket.emit("room_updated", getRoomInfo(room));
+  socket.emit("room_joined");
+};
+
+const leaveRoom = (socket) => {
+  for (let roomId of socket.rooms) {
+    const room = io.sockets.adapter.rooms.get(roomId);
+
+    socket.leave(roomId);
+    socket.to(roomId).emit("room_updated", getRoomInfo(room));
+  }
+};
+
+export { createRoom, joinRoom, leaveRoom, getRoomInfo };
