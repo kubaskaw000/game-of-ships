@@ -33,10 +33,8 @@ const LobbyView = () => {
       if (roomId == null) {
         socket.current.emit("create_room");
         setLink(`${window.location.href}?r=${socket.current.id}`);
-        setRoom({ id: socket.current.id });
       } else {
         joinRoom(socket.current, roomId);
-        setRoom(roomId);
       }
     });
 
