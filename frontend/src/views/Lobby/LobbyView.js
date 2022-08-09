@@ -1,5 +1,7 @@
 import io from "socket.io-client";
 import { useEffect, useRef, useState } from "react";
+import LobbyPlayersList from "../../components/LobbyPlayersList/LobbyPlayersList";
+import GameBoard from "../../components/GameBoard/GameBoard";
 
 const joinRoom = (socket, roomId) => {
   socket.emit("join_room", roomId);
@@ -43,9 +45,11 @@ const LobbyView = () => {
 
   return (
     <>
-      <div>Twoj link do lobby: {link}</div>
-      <div>Lista graczy: {players}</div>
+      {link !== "" && <div>Twoj link do lobby: {link}</div>}
+
+      <LobbyPlayersList players={players}></LobbyPlayersList>
       <div>Liczba graczy: {players.length}</div>
+      <GameBoard></GameBoard>
     </>
   );
 };

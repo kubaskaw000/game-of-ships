@@ -1,0 +1,12 @@
+.board{
+    display: grid;
+    grid-template-columns: repeat(10,50px);
+    grid-template-rows: repeat(10,50px);
+}
+
+.board__field{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(85, 117, 145);
+}
